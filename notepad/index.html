@@ -1,0 +1,32 @@
+<html>
+<head>
+	<title>notepad</title>
+	<style type="text/css">
+		body {background-color:#001121;}
+		#content {min-height: 90vh; min-width: auto; margin-left:2%; border-right: none; margin-top:1%; padding: 16px 16px 16px 16px; font-family: "Dejavu Sans"; color:#cccccc; border: 1px solid #112232;}
+	</style>
+</head>
+
+<body onLoad="load()">
+	<script>
+		var text = "";
+	
+		function save()
+			{
+				text = document.getElementById("content").innerHTML;
+				console.log(text);
+				localStorage.setItem(Text, text);
+			}
+			
+		function load()
+			{
+				text = localStorage.getItem(Text);
+				document.getElementById("content").innerHTML = text;
+			}
+	</script>
+	<center><button id="saveButton" onclick="save()">save</button><button id="loadbutton" onclick="load()">load</button></center>
+	<div id="content" contenteditable>
+	</div>
+</body>
+
+</html>

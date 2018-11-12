@@ -1,0 +1,66 @@
+<html>
+<head>
+<style type="text/css">
+/* (￣Θ￣) */
+body{font-size: 140;}
+#result{font-size: 348;}
+table{width:100%;}
+td{font-size: 140;text-align: center; width:20%;}
+p button{font-size: 190;}
+.d12{color:#088A08;}
+.d6{color:#B40404;}
+button{
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+	width:46%;}
+.rolld6{background-color:#B40404;}
+.rolld12{background-color:#088A08;}
+</style>
+</head>
+<body>
+<center>
+<br><br>
+<div id="history"></div>
+<div id="result"></div>
+    <script>
+        var node = document.getElementById("result");
+		var nrlist = document.getElementById("history");
+		var nr1 = 0;
+		var nr2 = 0;
+		var nr3 = 0;
+		var nr4 = 0;
+		var nr5 = 0;
+		
+		function roll6()
+		{
+			latest = Math.floor(Math.random() * 6 + 1);
+			node.innerHTML = "<div class=\"d6\">" + latest + "</div>";
+		};
+		function roll12()
+		{
+			latest = Math.floor(Math.random() * 12 + 1);
+			node.innerHTML = "<div class=\"d12\">" + latest + "</div>";
+		};
+		function blargh()
+		{
+			nr5 = nr4;
+			nr4 = nr3;
+			nr3 = nr2;
+			nr2 = nr1;
+			nr1 = node.innerHTML;
+			nrlist.innerHTML = "History:<table><tr><td>"+ nr5 +"</td><td>"+ nr4 +"</td><td>"+ nr3 +"</td><td>"+ nr2 +"</td><td>"+ nr1 +"</td></tr></table>"
+		};
+		latest=0;
+		node.innerHTML = "<div>" + latest + "</div>"
+		blargh();
+    </script>
+<p> <button class = "rolld6" onclick="blargh(); roll6();"> D6 </button> <button class = "rolld12" onclick="blargh(); roll12();">D12</button> </p>
+<br><br><br><br><br><br><br><br><br><br><br>(￣Θ￣)
+</center>
+</body>

@@ -1,0 +1,100 @@
+
+<html>
+<head>
+<style type="text/css">
+/* (ï¿£Î˜ï¿£) */
+body{font-size: 120;}
+#result{font-size: 348;}
+#resultdice{font-size: 100;}
+table{width:100%;}
+td{font-size: 120;text-align: center; width:20%;}
+p button{font-size: 80;}
+.d6{color:#0066ff;}
+button{
+    border: none;
+    color: white;
+    padding: 30px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 4px;
+	width:28%;
+	background-color: grey;}
+.rolld6{background-color:#0066ff;}
+#dicehistory {font-size:70;}
+
+</style>
+</head>
+<body>
+<center>
+<br><br>
+<div id="history"></div>
+<div id="result"></div>
+<div id="resultdice"></div>
+    <script>
+        var node = document.getElementById("result");
+		var nrlist = document.getElementById("history");
+		var nr1 = 0;
+		var nr2 = 0;
+		var nr3 = 0;
+		var nr4 = 0;
+		var nr5 = 0;
+		
+		var dice0 = "D2";
+		var dice1 = "D2";
+		var dice2 = "D2";
+		var dice3 = "D2";
+		var dice4 = "D2";
+		var dice5 = "D2";
+		
+		var d = 2;
+		
+		function roll()
+		{
+			latest = Math.floor(Math.random() * d + 1);
+			node.innerHTML = "<div class=\"d6\">" + latest + "</div>";
+			document.getElementById("resultdice").innerHTML = dice0;
+		};
+		
+		function increase()
+		{
+			d++;
+			document.getElementById("rollbutton").innerHTML = "D" + d;
+		}
+		
+		function decrease()
+		{
+			if ( d > 2 )
+				{
+					d--;
+					document.getElementById("rollbutton").innerHTML = "D" + d;
+				}
+		}
+		
+		function blargh()
+		{
+			nr5 = nr4;
+			nr4 = nr3;
+			nr3 = nr2;
+			nr2 = nr1;
+			nr1 = node.innerHTML;
+			
+			dice5 = dice4;
+			dice4 = dice3;
+			dice3 = dice2;
+			dice2 = dice1;
+			dice1 = dice0;
+			dice0 = "D" + d;
+			
+			nrlist.innerHTML = "History:<table><tr><td>"+ nr5 +"</td><td>"+ nr4 +"</td><td>"+ nr3 +"</td><td>"+ nr2 +"</td><td>"+ nr1 +"</td></tr><tr id=\"dicehistory\"><td id=\"dicehistory\">"+ dice5 +"</td><td id=\"dicehistory\">"+ dice4 +"</td><td id=\"dicehistory\">"+ dice3 +"</td><td id=\"dicehistory\">"+ dice2 +"</td><td id=\"dicehistory\">"+ dice1 +"</td></tr></table>";
+		
+		};
+		latest=0;
+		node.innerHTML = "<div>" + latest + "</div>";
+		document.getElementById("resultdice").innerHTML = dice0;
+		blargh();
+    </script>
+<p> <button class = "decrease" onclick = "decrease()"> - </button> <button class = "rolld6" id = "rollbutton" onclick="blargh(); roll();"> D2 </button> <button class = "increase" onclick="increase()"> + </button> </p>
+<br><br><br><br><br><br><br><br><br><br><br>(ï¿£Î˜ï¿£)
+</center>
+</body>

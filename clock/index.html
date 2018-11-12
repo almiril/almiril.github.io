@@ -1,0 +1,409 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Some Clocks</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+        <style type="text/css">
+           body
+            {
+                background-color: #272932;
+                color: #272932;
+                font-family: 'Roboto', sans-serif;
+                font-size: 22;
+            }
+
+            #error 
+            {
+                display: none;
+                color: #bc272f;
+                font-size: 16;
+            }
+
+            a, a:visited
+            {
+                color: #b6c2d9;
+            }
+
+            .clock
+            {
+                width:12em;
+                height:10em;
+                display: inline-grid;
+                border:#b6c2d9 0.1rem solid;
+                border-radius: 0.5em;
+                background:#73648A;
+                margin: 1em;
+                padding: 1em;
+            }
+
+            .title
+            {
+                width:98%;
+                display: inline-grid;
+            }
+
+            .tophalf
+            {
+                height:3em;
+            }
+
+            .delete
+            {
+                width:2%;
+                text-align: right;
+                display: inline-grid;
+            }
+
+            .delete a:hover, #menu a:hover
+            {
+                color:white;
+                cursor:pointer;
+            }
+
+            .timer
+            {
+                height: 5em;
+                width:100%;
+                display: inline-grid;
+            }
+
+            .addweek
+            {
+                height:20%;
+                width: 100%;
+                display: inline-grid;
+            }
+
+            .addweek button
+            {
+                height:2.5em;
+                width:100%;
+                border: #b6c2d9 0.1rem solid;
+                border-radius: 0.5em;
+                background: #9882AC;
+                color: #272932;
+                font-size: 1em;
+            }
+
+            .addweek button:hover
+            {
+                background:#A393BF;
+            }
+
+            #menu {font-size: 3vh; height: 3vh; margin-bottom: 1vh;}
+            #menu img {height: 30px; filter: invert(0.5)}
+            #menu img:hover, #menu0:hover, #menu1:hover {filter: invert(0.8);}
+            #addclock, #eximport, #settings {display: none;}
+            #clocks{padding-top: 0em;}
+            #clearbutton{display:none;}
+        </style>
+    </head>
+    <body onload="startup()">
+        <div id="menu">
+            <img id="menu0" onclick = "show('addclock','0')" src="file.svg" alt="add a new clock"></img> <img id="menu1" onclick = "show('eximport','1')" src="paste.svg"></img> <img onclick="changeSize(0)" src="plus-circle.svg"></img> <img onclick="changeSize(1)" src="minus-circle.svg"></img> <img id="sort" onclick= "sort()" src="sort.svg">
+        </div>
+        <div id="clocks">
+
+        </div>
+        <hr>
+        <div id="addclock">
+            <div id="plus">
+            </div>
+            <div id="addform">
+                <input type="text" id="title" placeholder="Show Title"><br>
+                <input type="date" id="date">
+                <input type="time" id="time">
+                <select id="timezone">
+                    <option value="0">UTC</option>
+                    <option value="1">CET (UTC+1)</option>
+                    <option value="2">CEST (UTC+2)</option>
+                    <option value="9">JST (UTC+9)</option>
+                    <option value="-6">CST (UTC-6)</option>
+                    <option value="-5">CDT (UTC-5)</option>
+                </select><br>
+                <input type="text" id="link" placeholder="url">
+                <button value="Add" onclick = "add()">Add</button>
+            </div>
+        </div>
+        <div id="error"></div>
+        <div id="eximport">
+                <button onclick="exporte()">Export</button>
+                <button onclick="importe()">Import</button>
+                <div id="import">
+
+                </div>
+                <div id="export">
+                    <textarea id="area"></textarea>
+                </div>
+                <br>
+                <button value="Clear" id="clearbutton" onclick = "clearSave()">Clear</button>
+            </div>
+
+        <script>
+            
+            var menuactive = [0,0,0];
+            var savelist = [];
+            var activelist = [];
+            var dotwsel = document.getElementById("dotw");
+            var exportshown = 0;
+            var available = 0;
+            var localTime = new Date();
+            
+            var sortedsavelist = [];
+
+            var cutofftime = 0;
+
+            //less magic numbers
+            var msPerWeek = 604800000;
+            var msPerDay = 86400000;
+            var msPerHour = 3600000;
+            var msPerMinute = 60000;
+            var msPerSecond = 1000;
+
+            var clocksize = 22; //default = 22
+
+            function startup()
+            {
+                var uiscale = localStorage.getItem("clockssize");
+                clocksize = JSON.parse(uiscale);
+                document.body.style.fontSize = clocksize;
+                build();
+                runningclock();
+            }
+//SECTION oldstuff
+            function runningclock()
+            {
+                var now = Date.now();
+                var availablenew = 0;
+                for (j=0; j<activelist.length; j++)
+                    {
+                    var airtime = activelist[j];
+                    var ms = airtime - now;
+                    
+                    if (ms<msPerDay){document.getElementById("clock"+ j*3).style.boxShadow = "0px 0px 1em 0.3em #b6c2d9";}
+                    else {document.getElementById("clock"+ j*3).style.boxShadow = "none";}
+
+                    if (ms < 1000)
+                        {
+                            document.getElementById("timer"+ j*3).innerHTML = "Aired";
+                            availablenew+=1;
+                        }
+                    
+                    else 
+                        {
+                        var d = Math.floor(ms/msPerDay);
+                        var h = Math.floor((ms%msPerDay)/msPerHour);
+                        var m = Math.floor((ms%msPerHour)/msPerMinute);
+                        var s = Math.floor((ms%msPerMinute)/msPerSecond);
+                        var sForPlural = function(num) { return (num == 1? ", " : "s, ");}
+                        document.getElementById("timer"+ j*3).innerHTML = "in " + d + " day" + sForPlural(d) +h+ " hour" + sForPlural(h)+"<br>"+m+ " minute" + sForPlural(m) +s+ " second" + (s == 1 ? "" : "s");
+                        }
+                    }
+                
+                if (availablenew != available)
+                    {
+                    available = availablenew;
+                    if (available == 0){document.title = "Some Clocks";}
+                    else {document.title = "["+available+"]";}
+                    }
+                    
+                setTimeout(runningclock, 1000);
+            }
+
+            function build()
+            {
+                document.getElementById("clocks").innerHTML=""; //clear this first
+                var now = Date.now();
+                activelist = [];
+                load();
+
+                for (var i=0; i < savelist.length ; i+=3)
+                {
+                    //these vars only exist to make the mess less of a...mess
+                    var title = savelist[i];
+                    var airtime = savelist[i+1];
+                    var link = savelist[i+2];
+                    activelist.push(airtime);
+                    document.getElementById("clocks").innerHTML += "<div id=\"clock" + i + "\" class=\"clock\"><div class=\"tophalf\"><div class = \"title\"><a href=\""+ link +"\" target=\"_blank\">" + title + "</a></div><div class = \"delete\"><a onclick = \"remove("+i+")\">x</a></div></div><div class=\"bottomhalf\"><div class = \"timer\" id=\"timer" + i +"\"></div></div></div>";
+                    document.getElementById("clock" + i).innerHTML += "<div class=\"addweek\"><button onclick=\"addWeek("+i+")\">+7d</button></div>";
+                }
+            }
+            function sort()
+            {
+                timestamplist = [];         //will be used to sort
+                timestamplistwithkeys = []; //saves current sort ID in savelist and timestamp
+                keylist = [];               //saves IDs to get from savelist
+                sortedsavelist = []; //thanks ara
+                for (var s=0; s < savelist.length ; s+=3) //fill timestamplistwithkeys and timestamplist as they are sorted now
+                {
+                    timestamplistwithkeys.push(s);
+                    timestamplistwithkeys.push(savelist[s+1]);
+                    timestamplist.push(savelist[s+1]);
+                }
+                console.log(timestamplistwithkeys);
+                
+                timestamplist.sort();
+
+                for (var t=0; t < timestamplist.length ; t+=1)
+                {
+                    stamp = timestamplist[t];
+                    for (var u=0; u < timestamplistwithkeys.length; u+=2)
+                    {
+                        if (timestamplistwithkeys[u+1] == stamp)
+                        {
+                            keylist.push(timestamplistwithkeys[u]); 
+                            timestamplistwithkeys.splice(u,2);
+                            break;
+                        }
+                    }
+                } 
+                console.log(keylist);
+
+                for (v=0; v<keylist.length; v++)
+                {
+                    key = keylist[v];
+                    sortedsavelist.push(savelist[key]);
+                    sortedsavelist.push(savelist[key+1]);
+                    sortedsavelist.push(savelist[key+2]);
+                }
+
+                console.log(sortedsavelist);
+
+                savelist = [];
+                savelist = sortedsavelist;
+                save();
+                build(); 
+            }
+
+            function add()
+            {
+                document.getElementById("error").innerHTML=""; //clear error messages so they don't double up and yell at you forever oh god stop the screaming
+                var title = document.getElementById("title").value;
+                var link = document.getElementById("link").value;
+                var date = new Date(document.getElementById("date").value);
+                var time = document.getElementById("time").value.split(":");
+
+                var offtime = date.getTime() + (time[0] * msPerHour) + (time[1] * msPerMinute); //time in its timezone
+                var offset = document.getElementById("timezone").value;                         //timezone offset from UTC
+                var utctime = offtime - offset*msPerHour;                                       //time in UTC
+                var now = Date.now();
+
+                //console.log(utctime);
+                //console.log(now);
+
+                var error = 0;
+                if (!title)
+                {
+                    document.getElementById("error").style.display="block";
+                    document.getElementById("error").innerHTML+="<br>Please enter a title";
+                    error = 1;
+                }
+
+                if (!date)
+                {
+                    document.getElementById("error").style.display="block";
+                    document.getElementById("error").innerHTML+="<br>Please enter a date";
+                    error = 1;
+                }
+
+                if (!utctime)
+                {
+                    document.getElementById("error").style.display="block";
+                    document.getElementById("error").innerHTML+="<br>Please enter a time";
+                    error = 1;
+                }
+
+                if(error == 1){return;}
+                document.getElementById("error").style.display="none";
+                
+                savelist.push(title,utctime,link);
+                sort();
+            }
+
+            function remove(id)
+            {
+                savelist.splice(id,3);
+                save();
+                build();
+            }
+
+            function addWeek(id)
+            {
+                savelist[id+1]+=msPerWeek;
+                sort();
+            }
+
+            function load()
+            {
+                if (localStorage.getItem("savelist"))
+                    {
+                    var seiveulisteuh = localStorage.getItem("savelist");
+                    savelist = JSON.parse(seiveulisteuh);
+                    }
+            }
+
+            function save()
+            {
+                localStorage.setItem("savelist", JSON.stringify(savelist));
+            }
+
+            function clearSave()
+            {
+                exporte();
+                savelist = []; save(); build();
+            }
+
+            function exporte()
+	        {
+                var exportstring= JSON.stringify(savelist);
+                document.getElementById("area").value = exportstring;
+	        }
+
+            function importe()
+            {
+                var importarray = JSON.parse(document.getElementById("area").value);
+                console.log(importarray);
+                for (i=0; i<importarray.length; i++)
+                {
+                    savelist.push(importarray[i]);
+                }
+                save();
+                build();
+            }
+//SECTION
+            function changeSize(d)
+            {
+                if (d == 0){clocksize += 1;}
+                if (d == 1 && clocksize > 5){clocksize -=1;}
+                document.body.style.fontSize = clocksize;
+                localStorage.setItem("clockssize", JSON.stringify(clocksize));
+            }
+
+
+
+            function show(segment,image)
+            {
+                console.log(segment);
+                console.log(image);
+                
+                var active = menuactive[image]; 
+
+                if (active == 0)
+                {
+                    document.getElementById(segment).style.display = "block";
+                    menuactive[image] = 1;
+                    document.getElementById("menu"+image).style.filter = "invert(0.8)";
+                }
+
+                else if (active == 1)
+                {
+                    document.getElementById("error").innerHTML="";
+                    document.getElementById(segment).style.display = "none";
+                    menuactive[image] = 0;
+                    document.getElementById("menu"+image).style.filter = "invert(0.5)";
+                }
+            }
+
+        </script>
+    </body>
+</html>
