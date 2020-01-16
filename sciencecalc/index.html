@@ -5,6 +5,7 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
         <style type="text/css">
             body {font-family: 'Roboto', sans-serif; font-size: 18;}
+            .stacks {color: #999999;}
         </style>
     </head>
     <body>
@@ -16,6 +17,7 @@
             var GreenNeeded = 0;
 
             var PlatePress = false;
+            var ShowStacks = true;
 
             var Inserter = 0;
             var ConveyorBelt = 0;
@@ -33,6 +35,7 @@
                 GreenNeeded = document.getElementById("GreenNeeded").value*1;
 
                 PlatePress = document.getElementById("PlatePress").checked;
+                ShowStacks = document.getElementById("ShowStacks").checked;
                 
                 Inserter = GreenNeeded;
                 ConveyorBelt = GreenNeeded;
@@ -80,13 +83,32 @@
                 document.getElementById("RawMats").innerHTML="<li><b>Raw Materials:</b></li>";
                 for(i=0; i<RawMats.length; i+=2)
                 {
-                    if(RawMats[i+1]!=0){document.getElementById("RawMats").innerHTML += "<li>"+RawMats[i]+": "+RawMats[i+1]+"</li>";}
+
+                    if(RawMats[i+1]!=0)
+                    {
+                        if(ShowStacks==true)
+                        {
+                            var stacks = Math.floor(RawMats[i+1]/64);
+                            var remainder = RawMats[i+1]-(64*stacks);
+                            document.getElementById("RawMats").innerHTML += "<li>"+RawMats[i]+": "+RawMats[i+1]+" <a class=\"stacks\">&nbsp;&nbsp;&nbsp;&nbsp;("+stacks+" Stacks + " + remainder + ")</a></li>";
+                        }
+                        else {document.getElementById("RawMats").innerHTML += "<li>"+RawMats[i]+": "+RawMats[i+1]+"</li>";}
+                    }
                 }
 
                 document.getElementById("Mats").innerHTML="<li><b>Intermediate Materials:<b></li>";
                 for(i=0; i<Mats.length; i+=2)
                 {
-                    if(Mats[i+1]!=0){document.getElementById("Mats").innerHTML += "<li>"+Mats[i]+": "+Mats[i+1]+"</li>";}
+                    if(Mats[i+1]!=0)
+                    {
+                        if(ShowStacks==true)
+                        {
+                            var stacks = Math.floor(Mats[i+1]/64);
+                            var remainder = Mats[i+1]-(64*stacks);
+                            document.getElementById("Mats").innerHTML += "<li>"+Mats[i]+": "+Mats[i+1]+" <a class=\"stacks\">&nbsp;&nbsp;&nbsp;&nbsp;("+stacks+" Stacks + " + remainder + ")</a></li>";
+                        }
+                        else {document.getElementById("Mats").innerHTML += "<li>"+Mats[i]+": "+Mats[i+1]+"</li>";}
+                    }
                 }
             }
 
@@ -94,7 +116,8 @@
         <div id="inputform">
             Red Science Needed: <input type="text" id="RedNeeded"><br>
             Green Science Needed: <input type="text" id="GreenNeeded"><br>
-            Plate Press? <input type="checkbox" id="PlatePress"><br>
+            Plate Press? <input type="checkbox" id="PlatePress" onclick="update()"><br>
+            Show Stacks?  <input type="checkbox" id="ShowStacks" onclick="update()"><br>
 
             <button onclick="update()">Update</button>
         </div>
