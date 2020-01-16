@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>Science Calculator</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+        <style type="text/css">
+            body {font-family: 'Roboto', sans-serif; font-size: 18;}
+        </style>
+    </head>
+    <body>
+        <script>
+            var Mats = [];
+            var RawMats =[];
+
+            var RedNeeded = 0;
+            var GreenNeeded = 0;
+
+            var PlatePress = false;
+
+            var Inserter = 0;
+            var ConveyorBelt = 0;
+            var IronGear = 0;
+            var BasicCircuit = 0;
+            var CopperWire = 0;
+            var IronPlate = 0;
+            var IronIngot = 0;
+            var CopperIngot = 0;
+            var Redstone = 0;
+            
+            function update()
+            {
+                RedNeeded = document.getElementById("RedNeeded").value*1;
+                GreenNeeded = document.getElementById("GreenNeeded").value*1;
+
+                PlatePress = document.getElementById("PlatePress").checked;
+                
+                Inserter = GreenNeeded;
+                ConveyorBelt = GreenNeeded;
+                IronGear = Inserter + Math.ceil(ConveyorBelt/2) + RedNeeded*2;
+                BasicCircuit = Inserter;
+                CopperWire = BasicCircuit*3;
+                
+                if(PlatePress==true)
+                {
+                    IronPlate = Math.ceil(ConveyorBelt/2);
+                    IronIngot = IronPlate + IronGear*5 + Inserter*3 + BasicCircuit*3;
+                }
+                else
+                {
+                    IronPlate = 0;
+                    IronIngot = ConveyorBelt + IronGear*5 + Inserter*3 + BasicCircuit*3;
+                }
+
+                CopperIngot = CopperWire + RedNeeded*2;
+                Redstone = BasicCircuit;
+
+                RawMats=[
+                    "Iron Ingot",IronIngot,
+                    "Copper Ingot",CopperIngot,
+                    "Redstone",Redstone
+                ];
+
+                Mats=[
+                    "Inserter",Inserter,
+                    "Conveyor Belt",ConveyorBelt,
+                    "Iron Gear",IronGear,
+                    "Basic Circuit",BasicCircuit,
+                    "Copper Wire", CopperWire,
+                    "Iron Plate",IronPlate
+                ];
+
+                console.log(RawMats);   //things are breaking and I need this
+                console.log(Mats);      //aaaaaaaaaaaaaaaaaaaaaaAAAAaaAAAAAAA
+                
+                build();
+            }
+            
+            function build()
+            {
+                document.getElementById("RawMats").innerHTML="<li><b>Raw Materials:</b></li>";
+                for(i=0; i<RawMats.length; i+=2)
+                {
+                    if(RawMats[i+1]!=0){document.getElementById("RawMats").innerHTML += "<li>"+RawMats[i]+": "+RawMats[i+1]+"</li>";}
+                }
+
+                document.getElementById("Mats").innerHTML="<li><b>Intermediate Materials:<b></li>";
+                for(i=0; i<Mats.length; i+=2)
+                {
+                    if(Mats[i+1]!=0){document.getElementById("Mats").innerHTML += "<li>"+Mats[i]+": "+Mats[i+1]+"</li>";}
+                }
+            }
+
+        </script>
+        <div id="inputform">
+            Red Science Needed: <input type="text" id="RedNeeded"><br>
+            Green Science Needed: <input type="text" id="GreenNeeded"><br>
+            Plate Press? <input type="checkbox" id="PlatePress"><br>
+
+            <button onclick="update()">Update</button>
+        </div>
+        <ul id = "RawMats"></ul>
+        <ul id = "Mats"></ul>
+        </table>
+    </body>
+</html>
