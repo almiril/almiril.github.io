@@ -7,9 +7,13 @@
         body{
             font-family: 'Roboto', sans-serif;
             font-size: 130%;
+            -webkit-text-size-adjust:100% /*Fuck mobile google chrome*/
         }
         img{
             max-width: 90%;
+        }
+        p{
+            -webkit-text-size-adjust:100% /*Fuck mobile google chrome*/
         }
         .section{
             max-width: 99%;
@@ -66,9 +70,9 @@
                 or by having someone craft them for you. <b>Make sure this is HQ gear</b>, NQ gear is worth 20 ilvls less.</p>
                 <h4>Tomestone (Crystarium) Gear</h4>
                 <p>This is ilvl 490 gear that can be upgraded to ilvl 500<br>
-                You can obtain this gear by exchanging tomestones of allegory to <button class="location" onclick="unhide('aymark')">Aymark</button> in Eulmore<br>
+                You can obtain this gear by exchanging tomestones of allegory to <button class="location" onclick="unhide('aymark')">Aymark</button> in Eulmore<br></p>
                 <div id="aymark" style="display: none;"><img src="img/aymarkpos.png" alt="Aymark's location"></div>
-                These tomestones can be obtained by completing certain duties and duty roulettes, but you can only obtain 450 of them per week.</p>
+                <p>These tomestones can be obtained by completing certain duties and duty roulettes, but you can only obtain 450 of them per week.</p>
                 <h4>Alliance Raid gear</h4>
                 <p>This is ilvl 490 gear that drops from the most recent alliance raid, The Puppets' Bunker. You can only obtain one piece of gear per week here, and this raid will not drop any weapons or accessories.</p>
                 <h4>Primal Weapons</h4>
@@ -91,7 +95,7 @@
                 <li><b>Purchase Augmented Neo-Ishgardian Equipment:</b><br>This has a few sub-sections where you can trade Undersea Rain and Eulmoran Certificates of Novelty for your upgraded gear.</li>
             </ul>
             <p><b><u>So how do you actually upgrade your gear?</u></b><br><ul>
-            <li>First off, take note of which items you want to upgrade.<br></li>
+            <li>First off, take note of which items you want to upgrade and unequip them.<br></li>
             <li>Next, in <b>Rain Exchange</b>, trade tomestones of Phantasmagoria for the amount of Undersea Rain you need to upgrade those pieces of gear.<br>
             You'll need:
             <ul>
