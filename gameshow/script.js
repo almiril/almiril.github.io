@@ -1,6 +1,6 @@
             var values = ["1", "100", "500", "10,000", "25,000", "50,000", "75,000", "100,000", "200,000","300,000","400,000","500,000","750,000","1,000,000","2,500,000","5,000,000"];
-            var colorvalues = ["white","celeste","cherry","lime","kobold","dragoon","regal","rose", "ruby", "rhotano", "sky blue", "orange", "morbol","dalamud","yellow","lavender"];
-            var colors = [];
+            var colorvalues = ["black", "dragoon", "skyblue", "white", "rhotano", "morbol", "lime", "celeste", "regal", "cherry", "rose", "lavender", "dalamud", "ruby", "orange", "yellow"];
+            var colors = ["#000000", "#000ea2", "#83b0d2", "#FFFFFF", "#1c3d54", "#1f4646", "#abb054", "#96bdb9", "#66304e", "#f5379b", "#e69f96", "#877fae", "#781a1a", "#e40011", "#c57424", "#fac62b"];
             var rowsize = 4;
             var shuffled = [];
             var clicked = 0;
@@ -41,7 +41,7 @@
                 document.getElementById("buttons").innerHTML=""; //clear this first
                 for (var j=buttonamt; j > 0 ; j--)
                 {
-                    document.getElementById("buttons").innerHTML += "<button id=\"scratcher" + j + "\" class=\"scratcher\" onclick=\"scratch("+j+")\">" + colorvalues[j-1] + "</button>";
+                    document.getElementById("buttons").innerHTML += "<button id=\"scratcher" + j + "\" class=\"scratcher\" style=\"background-color:" + colors[j-1] + "\" onclick=\"scratch("+j+")\">" + colorvalues[j-1] + "</button>";
                     if (j%rowsize == 1)
                     {
                         document.getElementById("buttons").innerHTML += "<br>";
@@ -56,6 +56,7 @@
                     let targetscratcher = "scratcher"+nr; 
                     winval = shuffled[nr-1];
                     document.getElementById(targetscratcher).innerHTML = winval;
+                    document.getElementById(targetscratcher).style.backgroundColor = "gray";
                     //clicked = 1;
                     //wintime = Date.now();
                     //save();
